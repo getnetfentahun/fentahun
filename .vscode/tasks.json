@@ -1,0 +1,104 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Deploy pending Prisma migrations",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"exec",
+				"prisma",
+				"--",
+				"migrate",
+				"deploy"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Neon migration status",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"exec",
+				"prisma",
+				"--",
+				"migrate",
+				"status"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Neon TCP connectivity",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Test-NetConnection -ComputerName ep-wispy-dust-b5bw70pq-pooler.c-7.us-east-2.aws.neon.tech -Port 5432 -InformationLevel Quiet"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify Neon migrations",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/c",
+				"npm.cmd exec prisma -- migrate status"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Neon reachability",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Test-NetConnection -ComputerName ep-wispy-dust-b5bw70pq-pooler.c-7.us-east-2.aws.neon.tech -Port 5432 -InformationLevel Quiet"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Prisma database status",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"exec",
+				"prisma",
+				"--",
+				"migrate",
+				"status"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Build after report filter fix",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Verify report filter build",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

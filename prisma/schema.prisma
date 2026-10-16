@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  HR
+  EMPLOYEE
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  ON_LEAVE
+  INACTIVE
+}
+
+enum DepartmentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  ABSENT
+}
+
+model Department {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  code        String     @unique
+  head        String     @default("")
+  status      DepartmentStatus @default(ACTIVE)
+  description String?
+  employees   Employee[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Employee {
+  id               String           @id @default(cuid())
+  employeeCode     String           @unique
+  firstName        String
+  lastName         String
+  email            String?          @unique
+  phoneNumber      String?
+  location         String?
+  jobTitle         String
+  employmentStatus EmploymentStatus @default(ACTIVE)
+  hireDate         DateTime?
+  departmentId     String
+  department       Department       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  user             User?
+  attendance       Attendance[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([departmentId])
+  @@index([employmentStatus])
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         UserRole  @default(EMPLOYEE)
+  employeeId   String?   @unique
+  employee     Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model SystemSettings {
+  id                String   @id @default("singleton")
+  timezone          String   @default("Africa/Addis_Ababa")
+  reportDefaultDays Int      @default(30)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Attendance {
+  id         String           @id @default(cuid())
+  employeeId String
+  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  attendanceDate DateTime     @db.Date
+  checkIn    DateTime         @default(now())
+  checkOut   DateTime?
+  status     AttendanceStatus @default(PRESENT)
+  notes      String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@index([employeeId, checkIn])
+  @@unique([employeeId, attendanceDate])
+  @@index([checkIn])
+  @@index([status])
+}
